@@ -1,0 +1,8 @@
+CHIP IsNeg16 {
+    IN in[16];
+    OUT out;
+
+    PARTS:
+        Not(in=in[15], out=n1);
+        Not(in=n1,    out=out);
+}
