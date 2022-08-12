@@ -15,7 +15,5 @@ CHIP Bit {
 
     PARTS:
         Mux(a=d, b=in, sel=load, out=s);
-        DFF(in=s, out=d);
-        Not(in=d, out=d2);
-        Not(in=d2, out=out);
+        DFF(in=s, out=d, out=out);
 }
