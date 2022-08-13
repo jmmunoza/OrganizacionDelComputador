@@ -42,12 +42,9 @@ CHIP ALU {
         Mux16(a=and, b=sum, sel=f, out=f1);
         // NO == 1 
         Not16(in=f1, out=notf);
-        Mux16(a=f1,  b=notf, sel=no, out=fout);
+        Mux16(a=f1,  b=notf, sel=no, out=fout, out=out);
         // OUT == 0  
         EqZr16(in=fout, out=zr);
         // OUT < 0
         IsNeg16(in=fout,out=ng);
-        // out
-        Not16(in=fout, out=nfout);
-        Not16(in=nfout, out=out);
 }
