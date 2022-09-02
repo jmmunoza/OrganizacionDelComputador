@@ -39,49 +39,58 @@ CHIP CPU {
         pc[15];          // address of next instruction
 
     PARTS:
-        Mux16(a=ALUout, b=instruction, sel=instruction[0], out=mux1);
-        ARegister(in=mux1, load=instruction[10], out=areg, out[0..14]=addressM);
+        // Se tiene que ver si la instruccion si es A.
+        // Viendo el primer bit y el bit A de ADM
+        Not(in=instruction[15], out=loadInstruction);
+        Or(a=instruction[5],    b=loadInstruction, out=loadA);
 
-        Mux16(a=areg, b=inM, sel=instruction[3], out=mux2);
-        DRegister(in=ALUout, load=instruction[11], out=dreg);
+        Mux16(a=ALUout,    b=instruction, sel=loadInstruction, out=mux1);
+        ARegister(in=mux1, load=loadA,    out=areg,            out[0..14]=addressM);
 
+        Mux16(a=areg, b=inM, sel=instruction[12], out=inputY);
+        DRegister(in=ALUout, load=instruction[4], out=inputX);
+        
         // cccccc LINE
-        ALU(x  =dreg,
-            y  =mux2, 
-            zx =instruction[4], 
-            nx =instruction[5], 
-            zy =instruction[6], 
-            ny =instruction[7],
-            f  =instruction[8], 
-            no =instruction[9], 
-            out=ALUout, 
-            out=outM, 
-            zr =zero, 
-            ng =lesszero);
+        ALU(x  = inputX,
+            y  = inputY, 
+            zx = instruction[11], 
+            nx = instruction[10], 
+            zy = instruction[9], 
+            ny = instruction[8],
+            f  = instruction[7], 
+            no = instruction[6], 
+            out= ALUout, 
+            out= outM, 
+            zr = zero, 
+            ng = negative);
 
         // ddd LINE
-        // instruction[10] --> A
-        // instruction[11] --> D
-        // instruction[12] --> M
+        // instruction[5] --> A
+        // instruction[4] --> D
+        // instruction[3] --> M
 
-        Not(in=instruction[12], out=notWriteM);
-        Not(in=notWriteM, out=writeM);
+        And(a=instruction[3], b=instruction[15], out=writeM);
 
         // jjj LINE
-        // instruction[13] --> < Menor
-        // instruction[14] --> = Igual
-        // instruction[15] --> > Mayor
+        // instruction[2] --> < Menor
+        // instruction[1] --> = Igual
+        // instruction[0] --> > Mayor
 
-        Not(in=lesszero, out=morezero);
+        Not(in=negative, out=morezero);
+        Not(in=zero,     out=notzero);
 
-        And(a=instruction[13], b=lesszero, out=itslesszero);
-        And(a=instruction[15], b=morezero, out=itsmorezero);
-        And(a=instruction[14], b=zero,     out=itszero);
+        // Estrictamente positivo
+        And(a=notzero, b=morezero, out=postive);
 
-        And(a=itslesszero, b=itsmorezero, out=and1);
-        And(a=and1, b=itszero, out=loadPC);
+        And(a=instruction[2], b=negative, out=itslesszero);
+        And(a=instruction[0], b=postive,  out=itsmorezero);
+        And(a=instruction[1], b=zero,     out=itszero);
 
-        PC(in=areg, load=loadPC, inc=true, reset=reset, out[0..14]=pc);
+        Or(a=itslesszero, b=itsmorezero, out=orJmp);
+        Or(a=orJmp, b=itszero, out=itsJump);
 
-        
+        And(a=itsJump, b=instruction[15], out=loadPC);
+        Not(in=loadPC, out=incPC);
+
+        PC(in=areg, load=loadPC, inc=incPC, reset=reset, out[0..14]=pc);        
 }

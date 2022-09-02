@@ -13,7 +13,6 @@
 
 // Put your code here.
 
-
 (LOOP)
     @24576
     D=M
