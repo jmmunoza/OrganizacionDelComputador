@@ -1,0 +1,33 @@
+// LOCAL 0 = x el que sumara
+// LOCAL 1 = y el qeu reducira
+// LOCAL 2 = resultado ++
+// LOCAL 3 = output
+
+push constant 4 // x
+pop local 0
+push constant 5 // y
+pop local 1
+push constant 0 // res ++
+pop local 2
+
+label LOOP_MULT
+// res = res + x
+push local 2
+push local 0
+add
+pop local 2
+// y =- 1
+push local 1
+push constant 1
+sub
+pop local 1
+
+// y > 0
+push local 1
+push constant 0
+gt
+if-goto LOOP_MULT
+
+// output = res
+push local 2
+pop local 3

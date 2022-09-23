@@ -1,0 +1,63 @@
+// FACTORIZACION
+// LOCAL 0 = n (n!)
+// LOCAL 1 = res
+
+// MULTIPLICACION
+// LOCAL 2 = x el que sumara
+// LOCAL 3 = y el que reducira
+// LOCAL 4 = resmul++
+
+// OUT
+// LOCAL 5 = OUTPUT
+
+push constant 6 // n = 6 --> output 6! = 720
+pop local 0
+push local 0 // res = n
+pop local 1
+
+label LOOP_FACT
+// n =- 1
+push local 0
+push constant 1
+sub
+pop local 0
+// n * res
+// aqui va la multiplicacion
+push local 1 // x
+pop local 2
+push local 0 // y
+pop local 3
+push constant 0 // resmul ++
+pop local 4
+
+label LOOP_MULT
+// resmul = resmul + x
+push local 2
+push local 4
+add
+pop local 4
+// y =- 1
+push local 3
+push constant 1
+sub
+pop local 3
+
+// y > 0
+push local 3
+push constant 0
+gt
+if-goto LOOP_MULT
+
+// res = resmul
+push local 4
+pop local 1
+
+// n > 0
+push local 0
+push constant 0
+gt
+if-goto LOOP_FACT
+
+// output = res
+push local 1
+pop local 5
