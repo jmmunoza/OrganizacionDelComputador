@@ -1,0 +1,27 @@
+function Fibonacci.fibonacci 0
+// Se mira si n < 2
+push argument 0
+push constant 2
+lt
+if-goto IF_TRUE
+goto IF_FALSE
+
+// if(n < 2)
+label IF_TRUE
+push argument 0
+return
+
+// else
+label IF_FALSE  // fib(n) = fib(n-2) + fib(n-1)
+push argument 0
+push constant 2
+sub
+call Fibonacci.fibonacci 1 //fib(n-2)
+
+push argument 0
+push constant 1
+sub
+call Fibonacci.fibonacci 1 //fib(n-1)
+
+add
+return

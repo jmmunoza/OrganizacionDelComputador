@@ -1,0 +1,7 @@
+function Sys.init 0
+push constant 11
+call Fibonacci.fibonacci 1
+
+    // no se me vaya a más posiciones de memoria.
+label WHILE
+goto WHILE
